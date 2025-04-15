@@ -3,6 +3,7 @@ import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Request } from 'express';
 import { DepositTransactionDto } from './dto/deposit-transaction.dto';
+import { RevertTransactionDto } from './dto/revert-transaction.dto';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -26,6 +27,17 @@ export class TransactionsController {
   ) {
     return this.transactionsService.deposit(
       depositTransactionDto,
+      request.user.sub,
+    );
+  }
+
+  @Post('/revert')
+  revert(
+    @Body() revertTransactionDto: RevertTransactionDto,
+    @Req() request: Request,
+  ) {
+    return this.transactionsService.revert(
+      revertTransactionDto,
       request.user.sub,
     );
   }
