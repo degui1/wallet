@@ -133,7 +133,11 @@ exports.Prisma.TransactionScalarFieldEnum = {
   receiver_id: 'receiver_id',
   amount: 'amount',
   description: 'description',
-  createdAt: 'createdAt'
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  type: 'type',
+  reversed: 'reversed',
+  reversed_transaction_id: 'reversed_transaction_id'
 };
 
 exports.Prisma.SortOrder = {
@@ -150,7 +154,11 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
+exports.TransactionType = exports.$Enums.TransactionType = {
+  DEPOSIT: 'DEPOSIT',
+  TRANSFER: 'TRANSFER',
+  REVERSAL: 'REVERSAL'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',

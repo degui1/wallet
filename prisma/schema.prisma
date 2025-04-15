@@ -30,15 +30,28 @@ model User {
 }
 
 model Transaction {
-  id          String   @id @default(uuid())
-  sender_id   String
-  receiver_id String
-  amount      Decimal
-  description String?
-  createdAt   DateTime @default(now())
+  id                      String          @id @default(uuid())
+  sender_id               String
+  receiver_id             String
+  amount                  Decimal
+  description             String?
+  created_at              DateTime        @default(now())
+  updated_at              DateTime?
+  type                    TransactionType
+  reversed                Boolean         @default(false)
+  reversed_transaction_id String?         @unique
 
-  sender   User @relation("SentTransactions", fields: [sender_id], references: [id])
-  receiver User @relation("ReceivedTransactions", fields: [receiver_id], references: [id])
+  sender   User? @relation("SentTransactions", fields: [sender_id], references: [id])
+  receiver User  @relation("ReceivedTransactions", fields: [receiver_id], references: [id])
+
+  reversal   Transaction? @relation("ReversalLink", fields: [reversed_transaction_id], references: [id])
+  reversedBy Transaction? @relation("ReversalLink")
 
   @@map("transactions")
+}
+
+enum TransactionType {
+  DEPOSIT
+  TRANSFER
+  REVERSAL
 }
