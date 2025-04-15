@@ -3,7 +3,7 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { TransferTransactionDto } from './dto/transfer-transaction.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { DepositTransactionDto } from './dto/deposit-transaction.dto';
 import { RevertTransactionDto } from './dto/revert-transaction.dto';
@@ -13,7 +13,7 @@ export class TransactionsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(
-    { amount, receiverId }: CreateTransactionDto,
+    { amount, receiverId }: TransferTransactionDto,
     loggedUserId: string,
   ) {
     const receiver = await this.prisma.user.findUnique({

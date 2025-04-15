@@ -1,4 +1,4 @@
-export class CreateTransactionDto {
+export class TransferTransactionDto {
   receiverId: string;
 
   amount: number;

@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Req } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { TransferTransactionDto } from './dto/transfer-transaction.dto';
 import { Request } from 'express';
 import { DepositTransactionDto } from './dto/deposit-transaction.dto';
 import { RevertTransactionDto } from './dto/revert-transaction.dto';
@@ -10,12 +10,12 @@ export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  create(
-    @Body() createTransactionDto: CreateTransactionDto,
+  transfer(
+    @Body() transferTransactionDto: TransferTransactionDto,
     @Req() request: Request,
   ) {
     return this.transactionsService.create(
-      createTransactionDto,
+      transferTransactionDto,
       request.user.sub,
     );
   }
