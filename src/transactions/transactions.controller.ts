@@ -10,33 +10,33 @@ export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  transfer(
+  async transfer(
     @Body() transferTransactionDto: TransferTransactionDto,
     @Req() request: Request,
   ) {
-    return this.transactionsService.transfer(
+    await this.transactionsService.transfer(
       transferTransactionDto,
       request.user.sub,
     );
   }
 
   @Post('/deposit')
-  deposit(
+  async deposit(
     @Body() depositTransactionDto: DepositTransactionDto,
     @Req() request: Request,
   ) {
-    return this.transactionsService.deposit(
+    await this.transactionsService.deposit(
       depositTransactionDto,
       request.user.sub,
     );
   }
 
   @Post('/revert')
-  revert(
+  async revert(
     @Body() revertTransactionDto: RevertTransactionDto,
     @Req() request: Request,
   ) {
-    return this.transactionsService.revert(
+    await this.transactionsService.revert(
       revertTransactionDto,
       request.user.sub,
     );
