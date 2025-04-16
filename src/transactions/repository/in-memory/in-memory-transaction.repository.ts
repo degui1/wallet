@@ -68,7 +68,7 @@ export class InMemoryTransactionRepository implements ITransactionRepository {
       updated_at: new Date(),
       reversed: false,
       reversed_transaction_id: transaction.id,
-      type: 'DEPOSIT',
+      type: 'REVERSAL',
       amount: new Prisma.Decimal(transaction.amount.toString()),
     };
 

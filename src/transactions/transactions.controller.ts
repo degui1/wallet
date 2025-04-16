@@ -14,10 +14,20 @@ export class TransactionsController {
     @Body() transferTransactionDto: TransferTransactionDto,
     @Req() request: Request,
   ) {
-    await this.transactionsService.transfer(
+    const { transaction } = await this.transactionsService.transfer(
       transferTransactionDto,
       request.user.sub,
     );
+
+    return {
+      transaction: {
+        id: transaction.id,
+        amount: transaction.amount,
+        description: transaction.description,
+        createdAt: transaction.created_at,
+        type: transaction.type,
+      },
+    };
   }
 
   @Post('/deposit')
@@ -25,10 +35,20 @@ export class TransactionsController {
     @Body() depositTransactionDto: DepositTransactionDto,
     @Req() request: Request,
   ) {
-    await this.transactionsService.deposit(
+    const { transaction } = await this.transactionsService.deposit(
       depositTransactionDto,
       request.user.sub,
     );
+
+    return {
+      transaction: {
+        id: transaction.id,
+        amount: transaction.amount,
+        description: transaction.description,
+        createdAt: transaction.created_at,
+        type: transaction.type,
+      },
+    };
   }
 
   @Post('/revert')
@@ -36,9 +56,19 @@ export class TransactionsController {
     @Body() revertTransactionDto: RevertTransactionDto,
     @Req() request: Request,
   ) {
-    await this.transactionsService.revert(
+    const { transaction } = await this.transactionsService.revert(
       revertTransactionDto,
       request.user.sub,
     );
+
+    return {
+      transaction: {
+        id: transaction.id,
+        amount: transaction.amount,
+        description: transaction.description,
+        createdAt: transaction.created_at,
+        type: transaction.type,
+      },
+    };
   }
 }
