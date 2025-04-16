@@ -16,7 +16,7 @@ export class InMemoryUserRepository implements IUserRepository {
       password_hash: data.password_hash,
       created_at: new Date(),
       updated_at: new Date(),
-      balance: new Prisma.Decimal('0'),
+      balance: new Prisma.Decimal((data.balance as number) || 0),
     };
 
     this.users.push(user);
@@ -26,6 +26,16 @@ export class InMemoryUserRepository implements IUserRepository {
 
   findByEmail(email: string) {
     const user = this.users.find((user) => user.email === email);
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  }
+
+  findById(id: string) {
+    const user = this.users.find((user) => user.id === id);
 
     if (!user) {
       return null;

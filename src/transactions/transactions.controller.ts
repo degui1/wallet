@@ -14,7 +14,7 @@ export class TransactionsController {
     @Body() transferTransactionDto: TransferTransactionDto,
     @Req() request: Request,
   ) {
-    return this.transactionsService.create(
+    return this.transactionsService.transfer(
       transferTransactionDto,
       request.user.sub,
     );

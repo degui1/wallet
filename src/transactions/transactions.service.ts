@@ -1,32 +1,35 @@
 import {
   BadRequestException,
   ForbiddenException,
+  Inject,
   Injectable,
 } from '@nestjs/common';
 import { TransferTransactionDto } from './dto/transfer-transaction.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { DepositTransactionDto } from './dto/deposit-transaction.dto';
 import { RevertTransactionDto } from './dto/revert-transaction.dto';
+import { IUserRepository } from 'src/users/repositories/user.repository.interface';
+import { ITransactionRepository } from './repository/transaction.repository.interface';
 
 @Injectable()
 export class TransactionsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('IUserRepository')
+    private readonly userRepository: IUserRepository,
+    @Inject('ITransactionRepository')
+    private readonly transactionRepository: ITransactionRepository,
+  ) {}
 
-  async create(
+  async transfer(
     { amount, receiverId }: TransferTransactionDto,
     loggedUserId: string,
   ) {
-    const receiver = await this.prisma.user.findUnique({
-      where: { id: receiverId },
-    });
+    const receiver = await this.userRepository.findById(receiverId);
 
     if (!receiver) {
       throw new BadRequestException();
     }
 
-    const sender = await this.prisma.user.findUnique({
-      where: { id: loggedUserId },
-    });
+    const sender = await this.userRepository.findById(loggedUserId);
 
     if (!sender) {
       throw new BadRequestException();
@@ -38,67 +41,37 @@ export class TransactionsService {
       throw new ForbiddenException('Insufficient funds');
     }
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.user.update({
-        where: { id: sender.id },
-        data: {
-          balance: { decrement: amount },
-          updated_at: new Date(),
-        },
-      });
+    const transaction = await this.transactionRepository.createTransfer(
+      amount,
+      receiver.id,
+      sender.id,
+    );
 
-      await tx.user.update({
-        where: { id: receiver.id },
-        data: {
-          balance: { increment: amount },
-          updated_at: new Date(),
-        },
-      });
-
-      await tx.transaction.create({
-        data: {
-          sender_id: sender.id,
-          receiver_id: receiver.id,
-          amount: amount,
-          type: 'TRANSFER',
-        },
-      });
-    });
+    return {
+      transaction,
+    };
   }
 
   async deposit({ amount }: DepositTransactionDto, loggedUserId: string) {
-    const sender = await this.prisma.user.findUnique({
-      where: { id: loggedUserId },
-    });
+    const sender = await this.userRepository.findById(loggedUserId);
 
     if (!sender) {
       throw new BadRequestException();
     }
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.user.update({
-        where: { id: sender.id },
-        data: {
-          balance: { increment: amount },
-          updated_at: new Date(),
-        },
-      });
+    const transaction = await this.transactionRepository.createDeposit(
+      amount,
+      loggedUserId,
+    );
 
-      await tx.transaction.create({
-        data: {
-          sender_id: sender.id,
-          receiver_id: sender.id,
-          amount: amount,
-          type: 'DEPOSIT',
-        },
-      });
-    });
+    return {
+      transaction,
+    };
   }
 
   async revert({ transactionId }: RevertTransactionDto, loggedUserId: string) {
-    const transaction = await this.prisma.transaction.findUnique({
-      where: { id: transactionId },
-    });
+    const transaction =
+      await this.transactionRepository.findById(transactionId);
 
     if (!transaction) {
       throw new BadRequestException('Transaction not found.');
@@ -118,37 +91,11 @@ export class TransactionsService {
       throw new BadRequestException('Transaction already reversed.');
     }
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.user.update({
-        where: { id: transaction.sender_id },
-        data: {
-          balance: { increment: transaction.amount },
-          updated_at: new Date(),
-        },
-      });
+    const transactionReveal =
+      await this.transactionRepository.revert(transaction);
 
-      await tx.user.update({
-        where: { id: transaction.receiver_id },
-        data: {
-          balance: { decrement: transaction.amount },
-          updated_at: new Date(),
-        },
-      });
-
-      await tx.transaction.create({
-        data: {
-          sender_id: transaction.sender_id,
-          receiver_id: transaction.receiver_id,
-          amount: transaction.amount,
-          type: 'REVERSAL',
-          reversed_transaction_id: transaction.id,
-        },
-      });
-
-      await tx.transaction.update({
-        where: { id: transaction.id },
-        data: { reversed: true },
-      });
-    });
+    return {
+      transaction: transactionReveal,
+    };
   }
 }
