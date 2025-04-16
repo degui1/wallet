@@ -19,7 +19,7 @@ describe('AuthController', () => {
         JwtModule.registerAsync({
           imports: [ConfigModule],
           inject: [ConfigService],
-          useFactory: (config: ConfigService) => ({
+          useFactory: () => ({
             secret: 'test-secret',
             signOptions: { expiresIn: '1h' },
           }),

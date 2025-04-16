@@ -1,7 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Public } from 'src/utils/decorators/public';
+import { Public } from '../utils/decorators/public';
 
 @Controller('users')
 export class UsersController {
@@ -9,7 +9,16 @@ export class UsersController {
 
   @Public()
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const { user } = await this.usersService.create(createUserDto);
+
+    return {
+      user: {
+        name: user.name,
+        id: user.id,
+        email: user.email,
+        created_at: user.created_at,
+      },
+    };
   }
 }
