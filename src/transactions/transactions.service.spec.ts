@@ -248,4 +248,26 @@ describe('TransactionsService', () => {
       service.revert({ transactionId: transaction.id }, sender.id),
     ).rejects.toBeInstanceOf(BadRequestException);
   });
+
+  it('should not be possible to reverse a deposit', async () => {
+    const transferAmount = 1000;
+
+    const password_hash = await hash('123456', 6);
+
+    const sender = await inMemoryUserRepository.create({
+      name: 'Receiver',
+      email: 'receiver@example.com',
+      password_hash,
+      balance: 2000,
+    });
+
+    const transaction = inMemoryTransactionRepository.createDeposit(
+      transferAmount,
+      sender.id,
+    );
+
+    await expect(() =>
+      service.revert({ transactionId: transaction.id }, sender.id),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
 });

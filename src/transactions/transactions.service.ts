@@ -87,6 +87,12 @@ export class TransactionsService {
       );
     }
 
+    if (transaction.type === 'DEPOSIT') {
+      throw new ForbiddenException(
+        'You do not have permission to perform this action',
+      );
+    }
+
     if (transaction.reversed) {
       throw new BadRequestException('Transaction already reversed.');
     }
