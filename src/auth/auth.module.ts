@@ -4,9 +4,10 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
-import { PrismaModule } from 'src/prisma/prisma.module';
-import { PrismaUserRepository } from 'src/users/repositories/prisma/prisma-user.repository';
+import { PrismaModule } from '../prisma/prisma.module';
+import { PrismaUserRepository } from '../users/repositories/prisma/prisma-user.repository';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   controllers: [AuthController],
   providers: [
     AuthService,
+    PrismaService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

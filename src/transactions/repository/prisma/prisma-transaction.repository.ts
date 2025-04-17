@@ -1,5 +1,5 @@
-import { Transaction } from 'generated/prisma';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Transaction } from '../../../../generated/prisma';
+import { PrismaService } from '../../../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { ITransactionRepository } from '../transaction.repository.interface';
 

@@ -1,4 +1,4 @@
-import { Transaction } from 'generated/prisma';
+import { Transaction } from '../../../generated/prisma';
 
 export interface ITransactionRepository {
   findById(id: string): Promise<Transaction | null> | Transaction | null;
