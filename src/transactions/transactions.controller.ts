@@ -4,12 +4,16 @@ import { TransferTransactionDto } from './dto/transfer-transaction.dto';
 import { Request } from 'express';
 import { DepositTransactionDto } from './dto/deposit-transaction.dto';
 import { RevertTransactionDto } from './dto/revert-transaction.dto';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Make a transfer' })
+  @ApiResponse({ status: 201, description: 'Returns a transfer object' })
   async transfer(
     @Body() transferTransactionDto: TransferTransactionDto,
     @Req() request: Request,
@@ -31,6 +35,8 @@ export class TransactionsController {
   }
 
   @Post('/deposit')
+  @ApiOperation({ summary: 'Make a deposit' })
+  @ApiResponse({ status: 201, description: 'Returns a deposit object' })
   async deposit(
     @Body() depositTransactionDto: DepositTransactionDto,
     @Req() request: Request,
@@ -52,6 +58,8 @@ export class TransactionsController {
   }
 
   @Post('/revert')
+  @ApiOperation({ summary: 'Revert a transfer' })
+  @ApiResponse({ status: 201, description: 'Returns a reverted transfer' })
   async revert(
     @Body() revertTransactionDto: RevertTransactionDto,
     @Req() request: Request,
