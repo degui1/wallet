@@ -19,7 +19,7 @@ export function setup(schema: string) {
 
   process.env.DATABASE_URL = databaseURL;
 
-  execSync('npx prisma migrate deploy', {
+  execSync('pnpm dlx prisma migrate deploy', {
     env: {
       DATABASE_URL: databaseURL,
     },
