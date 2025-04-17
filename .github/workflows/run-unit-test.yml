@@ -15,9 +15,8 @@ jobs:
           node-version: 18
           cache: 'pnpm'
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - uses: pnpm/action-setup@v4
 
-      - run: pnpm ci
+      - run: pnpm install --frozen-lockfile
 
       - run: pnpm run test
